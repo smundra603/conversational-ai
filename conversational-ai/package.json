@@ -1,0 +1,65 @@
+{
+  "name": "conversational-ai",
+  "version": "1.0.0",
+  "description": "Service to converse with AI models",
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "dev:debug": "node --import tsx --inspect=9229 --watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "build:watch": "tsc -p tsconfig.json -w --preserveWatchOutput",
+    "start": "node dist/server.js",
+    "start:debug": "node --inspect=9229 dist/server.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "format": "prettier -w .",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:unit": "UNIT_TESTS=1 node --experimental-vm-modules node_modules/jest/bin/jest.js tests/unit --runInBand",
+    "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/integration --runInBand",
+    "test:node": "node --experimental-vm-modules ./node_modules/.bin/jest --config jest.config.cjs --coverage --verbose",
+    "test:watch": "node --experimental-vm-modules ./node_modules/.bin/jest --config jest.config.cjs --watch"
+  },
+  "keywords": [
+    "conversational-ai"
+  ],
+  "author": "smundra603",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^10.0.0",
+    "@fastify/env": "^5.0.0",
+    "@fastify/helmet": "^13.0.0",
+    "@fastify/sensible": "^6.0.0",
+    "@typegoose/typegoose": "^13.1.0",
+    "bcrypt": "^6.0.0",
+    "fastify": "^5.0.0",
+    "fastify-plugin": "^5.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.5",
+    "reflect-metadata": "^0.2.2",
+    "supertest": "^7.2.2",
+    "uuid": "^13.0.0",
+    "winston": "^3.19.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.0.0",
+    "@types/supertest": "^6.0.3",
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.0.0",
+    "ts-jest": "^29.2.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}

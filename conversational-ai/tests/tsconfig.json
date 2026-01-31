@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Only for editor/Jest; we don't emit files from tests
+    "noEmit": true,
+
+    // Root at project so imported src files are inside rootDir
+    "rootDir": "..",
+
+    // Keep consistent with ESM setup
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    // Jest + Node globals in tests
+    "types": ["node", "jest", "@types/supertest"]
+  },
+  "include": ["./**/*.ts"]
+}

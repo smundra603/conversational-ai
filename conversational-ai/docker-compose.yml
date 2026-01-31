@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  mongo1:
+    image: mongo:7.0
+    container_name: conversational-ai-mongo1
+    restart: unless-stopped
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all']
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo1_data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  mongo2:
+    image: mongo:7.0
+    container_name: conversational-ai-mongo2
+    restart: unless-stopped
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all']
+    ports:
+      - '27018:27017'
+    volumes:
+      - mongo2_data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+    depends_on:
+      - mongo1
+
+  mongo3:
+    image: mongo:7.0
+    container_name: conversational-ai-mongo3
+    restart: unless-stopped
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all']
+    ports:
+      - '27019:27017'
+    volumes:
+      - mongo3_data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+    depends_on:
+      - mongo1
+
+  mongo-setup:
+    image: mongo:7.0
+    container_name: conversational-ai-mongo-setup
+    depends_on:
+      mongo1:
+        condition: service_healthy
+      mongo2:
+        condition: service_started
+      mongo3:
+        condition: service_started
+    restart: 'no'
+    entrypoint: ['bash']
+    command:
+      - -lc
+      - |
+        echo 'Waiting for replica set members...'
+        for i in {1..30}; do
+          mongosh --host mongo1:27017 --quiet --eval "db.adminCommand('ping').ok" && break || sleep 2
+        done
+        echo 'Initializing replica set if needed...'
+        mongosh --host mongo1:27017 --quiet <<'EOF'
+          try {
+            var s = rs.status();
+            if (s.ok === 1) { print("replica set already initialized"); quit(0); }
+          } catch (e) { /* not initialized */ }
+          rs.initiate({
+            _id: "rs0",
+            members: [
+              { _id: 0, host: "host.docker.internal:27017" },
+              { _id: 1, host: "host.docker.internal:27018" },
+              { _id: 2, host: "host.docker.internal:27019" }
+            ]
+          });
+          var ready = false; var attempts = 0;
+          while (!ready && attempts < 30) {
+            try { ready = rs.status().ok === 1; } catch (e) { ready = false; }
+            if (!ready) { sleep(1000); attempts++; }
+          }
+          print("replica set ready:", ready);
+        EOF
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: conversational-ai
+    restart: unless-stopped
+    depends_on:
+      mongo-setup:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      SERVICE_NAME: conversational-ai
+      HOST: 0.0.0.0
+      PORT: 3000
+      LOG_LEVEL: info
+      CORS_ORIGIN: 'true'
+      MONGO_URI: mongodb://mongo1:27017,mongo2:27017,mongo3:27017/conversational_ai?replicaSet=rs0
+      JWT_SECRET: 2eff2a9eedb6bd8ac30ca6eb8fb439f9
+    ports:
+      - '3000:3000'
+    # healthcheck could be enabled if curl/wget is available in the image
+    # healthcheck:
+    #   test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+
+volumes:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:

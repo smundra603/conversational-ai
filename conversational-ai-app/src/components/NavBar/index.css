@@ -1,0 +1,22 @@
+.navbar ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  color: #000;
+  text-decoration: none;
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+nav ul li a:hover {
+  color: #00a8ff;
+  background-color: rgba(0, 168, 255, 0.08);
+}
+
+nav ul li a.active {
+  color: #00a8ff;
+  background-color: rgba(0, 168, 255, 0.12);
+}

@@ -1,0 +1,54 @@
+# Global
+.DS_Store
+*.pem
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+.eslintcache
+.stylelintcache
+.nyc_output/
+.node_repl_history
+.vscode/
+.idea/
+.history/
+.turbo/
+Thumbs.db
+
+# Catch-all for future packages
+**/dist/
+**/coverage/
+**/build/
+**/.vite/
+
+# Root env files
+.env
+
+# Backend (conversational-ai)
+conversational-ai/node_modules/
+conversational-ai/dist/
+conversational-ai/coverage/
+conversational-ai/.env
+conversational-ai/.DS_Store
+
+# Frontend (conversational-ai-app)
+conversational-ai-app/node_modules/
+conversational-ai-app/.pnp
+conversational-ai-app/.pnp.js
+conversational-ai-app/coverage
+conversational-ai-app/.next/
+conversational-ai-app/out/
+conversational-ai-app/build
+conversational-ai-app/dist
+conversational-ai-app/dist-ssr
+conversational-ai-app/.DS_Store
+conversational-ai-app/.env
+conversational-ai-app/.env.local
+conversational-ai-app/.env.development.local
+conversational-ai-app/.env.test.local
+conversational-ai-app/.env.production.local
+conversational-ai-app/.vercel
+conversational-ai-app/*.local
+
