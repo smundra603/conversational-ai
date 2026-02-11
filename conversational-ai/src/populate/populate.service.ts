@@ -68,7 +68,7 @@ export async function runPopulate(): Promise<PopulateResult> {
 
     const user = await userService.getUser({ emailId: 'admin@example.com' }, systemContextForInitialUserLoad);
 
-    const systemContext = await tenantService.systemContext(tenant._id.toString(), user?.id);
+    const systemContext = await tenantService.systemContext(tenant._id.toString(), user?._id.toString());
     const agentInputs: CreateAgentInput[] = [
       {
         name: 'Assistant GPT',
